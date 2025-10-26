@@ -3,7 +3,7 @@ FROM ubuntu:22.04
 
 # Cài thư viện cần thiết
 RUN apt-get update && apt-get install -y \
-    build-essential openjdk-17-jre openjdk-17-jdk git make curl && \
+    build-essential openjdk-17-jre openjdk-17-jdk git make curl python3 && \
     apt-get clean
 
 # Tải mã nguồn VPL
@@ -11,11 +11,9 @@ WORKDIR /opt
 RUN git clone https://github.com/jcrodriguez-dis/moodle-mod_vpl.git
 WORKDIR /opt/moodle-mod_vpl/jail
 
-# Cài đặt Jail Server
-RUN make install
+# Build VPL jail system
+RUN make
 
-# Mở port 8080
+# Cấu hình để chạy server
 EXPOSE 8080
-
-# Chạy server
-CMD vpl-jail-system start && tail -f /dev/null
+CMD ["./vpl-jail-server", "--no-daemon", "--port", "8080"]
